@@ -6,15 +6,15 @@ import com.willfp.eco.core.display.DisplayPriority
 import com.willfp.eco.core.display.DisplayProperties
 import com.willfp.eco.core.fast.FastItemStack
 import com.willfp.eco.core.fast.fast
-import com.willfp.eco.core.items.builder.modify
 import com.willfp.ecoenchants.EcoEnchantsPlugin
 import com.willfp.ecoenchants.commands.CommandToggleDescriptions.Companion.seesEnchantmentDescriptions
 import com.willfp.ecoenchants.display.EnchantSorter.sortForDisplay
 import com.willfp.ecoenchants.enchant.EcoEnchant
-import com.willfp.ecoenchants.enchant.EcoEnchants
 import com.willfp.ecoenchants.enchant.wrap
 import com.willfp.ecoenchants.target.EnchantmentTargets.isEnchantable
 import com.willfp.libreforge.ItemProvidedHolder
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
@@ -32,8 +32,10 @@ interface HideStoredEnchantsProxy {
     fun areStoredEnchantsHidden(fis: FastItemStack): Boolean
 }
 
-@Suppress("DEPRECATION")
-class EnchantDisplay(private val plugin: EcoEnchantsPlugin) : DisplayModule(plugin, DisplayPriority.HIGH) {
+class EnchantDisplay(
+    private val plugin: EcoEnchantsPlugin,
+    private val miniMessage: MiniMessage,
+) : DisplayModule(plugin, DisplayPriority.HIGH) {
     private val hideStateKey =
         plugin.namespacedKeyFactory.create("ecoenchantlore-skip") // Same for backwards compatibility
 
@@ -64,7 +66,7 @@ class EnchantDisplay(private val plugin: EcoEnchantsPlugin) : DisplayModule(plug
             pdc.set(hideStateKey, PersistentDataType.INTEGER, 0)
         }
 
-        val lore = fast.lore
+        val oldLore = fast.loreComponents
         val enchantLore = mutableListOf<String>()
 
         // Get enchants mapped to EcoEnchantLike
@@ -128,7 +130,7 @@ class EnchantDisplay(private val plugin: EcoEnchantsPlugin) : DisplayModule(plug
             hse.hideStoredEnchants(fast)
         }
 
-        fast.lore = enchantLore + lore + notMetLines
+        fast.loreComponents = enchantLore.toComponent + oldLore + notMetLines.toComponent
     }
 
     override fun revert(itemStack: ItemStack) {
@@ -168,4 +170,84 @@ class EnchantDisplay(private val plugin: EcoEnchantsPlugin) : DisplayModule(plug
 
     private val PersistentDataContainer.hideState: Int
         get() = this.get(hideStateKey, PersistentDataType.INTEGER) ?: -1
+
+    private val List<String>.toComponent: List<Component>
+        get() = map { miniMessage.deserialize(legacyToMiniMessage(it)) }
+
+    private fun legacyToMiniMessage(legacy: String): String {
+        return buildString {
+            val chars = legacy.toCharArray()
+            var i = 0
+            while (i < chars.size) {
+                if (!isColorCode(chars[i])) {
+                    append(chars[i])
+                    i++
+                    continue
+                }
+                if (i + 1 >= chars.size) {
+                    append(chars[i])
+                    i++
+                    continue
+                }
+                when (chars[i + 1]) {
+                    '0' -> append("<black>")
+                    '1' -> append("<dark_blue>")
+                    '2' -> append("<dark_green>")
+                    '3' -> append("<dark_aqua>")
+                    '4' -> append("<dark_red>")
+                    '5' -> append("<dark_purple>")
+                    '6' -> append("<gold>")
+                    '7' -> append("<gray>")
+                    '8' -> append("<dark_gray>")
+                    '9' -> append("<blue>")
+                    'a' -> append("<green>")
+                    'b' -> append("<aqua>")
+                    'c' -> append("<red>")
+                    'd' -> append("<light_purple>")
+                    'e' -> append("<yellow>")
+                    'f' -> append("<white>")
+                    'r' -> append("<reset><!i>")
+                    'l' -> append("<b>")
+                    'm' -> append("<st>")
+                    'o' -> append("<i>")
+                    'n' -> append("<u>")
+                    'k' -> append("<obf>")
+                    'x' -> {
+                        if (i + 13 >= chars.size || !isColorCode(chars[i + 2])
+                            || !isColorCode(chars[i + 4])
+                            || !isColorCode(chars[i + 6])
+                            || !isColorCode(chars[i + 8])
+                            || !isColorCode(chars[i + 10])
+                            || !isColorCode(chars[i + 12])
+                        ) {
+                            append(chars[i])
+                            i++
+                            continue
+                        }
+                        append("<#")
+                        append(chars[i + 3])
+                        append(chars[i + 5])
+                        append(chars[i + 7])
+                        append(chars[i + 9])
+                        append(chars[i + 11])
+                        append(chars[i + 13])
+                        append(">")
+                        i += 12
+                    }
+
+                    else -> {
+                        append(chars[i])
+                        i++
+                        continue
+                    }
+                }
+                i++
+                i++
+            }
+        }
+    }
+
+    private fun isColorCode(c: Char): Boolean {
+        return c == '§' || c == '&'
+    }
 }

@@ -40,6 +40,8 @@ import com.willfp.libreforge.loader.configs.ConfigCategory
 import com.willfp.libreforge.registerHolderPlaceholderProvider
 import com.willfp.libreforge.registerHolderProvider
 import com.willfp.libreforge.registerSpecificRefreshFunction
+import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.Listener
@@ -148,7 +150,9 @@ class EcoEnchantsPlugin : LibreforgePlugin() {
         }
 
         return listOf(
-            EnchantDisplay(this)
+            EnchantDisplay(this, MiniMessage.builder()
+                .postProcessor { it.decoration(TextDecoration.ITALIC, false) }
+                .build())
         )
     }
 }
