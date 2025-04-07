@@ -26,7 +26,10 @@ dependencies {
     implementation(project(":eco-core:core-nms:v1_20_R1"))
     implementation(project(":eco-core:core-nms:v1_20_R2"))
     implementation(project(":eco-core:core-nms:v1_20_R3", configuration = "reobf"))
-    implementation(project(":eco-core:core-nms:v1_21", configuration = "reobf"))
+
+    if (JavaVersion.current().majorVersion.toDouble() >= 21) {
+        implementation(project(":eco-core:core-nms:v1_21", configuration = "reobf"))
+    }
 }
 
 allprojects {
@@ -37,10 +40,12 @@ allprojects {
 
     repositories {
         mavenLocal()
+        maven("https://repo.auxilor.io/repository/maven-public/")
+        maven("https://repo.huaweicloud.com/repository/maven/")
         mavenCentral()
 
         maven("https://repo.papermc.io/repository/maven-public/")
-        maven("https://repo.auxilor.io/repository/maven-public/")
+        maven("https://repo.rosewooddev.io/repository/public/")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://repo.codemc.org/repository/nms/")
         maven("https://repo.essentialsx.net/releases/")
@@ -76,12 +81,14 @@ allprojects {
         }
 
         processResources {
-            filesMatching(listOf("**plugin.yml", "**eco.yml")) {
-                expand(
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+            from(sourceSets.main.get().resources.srcDirs) {
+                expand(mapOf(
                     "version" to project.version,
                     "libreforgeVersion" to libreforgeVersion,
-                    "pluginName" to rootProject.name
-                )
+                    "pluginName" to rootProject.name,
+                ))
+                include("plugin.yml", "eco.yml")
             }
         }
 
@@ -96,8 +103,5 @@ allprojects {
 
     java {
         withSourcesJar()
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
-        }
     }
 }
