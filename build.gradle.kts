@@ -17,19 +17,19 @@ base {
 
 dependencies {
     implementation(project(":eco-core:core-plugin"))
-    implementation(project(":eco-core:core-nms:v1_17_R1"))
-    implementation(project(":eco-core:core-nms:v1_18_R1"))
-    implementation(project(":eco-core:core-nms:v1_18_R2"))
-    implementation(project(":eco-core:core-nms:v1_19_R1"))
-    implementation(project(":eco-core:core-nms:v1_19_R2"))
-    implementation(project(":eco-core:core-nms:v1_19_R3"))
-    implementation(project(":eco-core:core-nms:v1_20_R1"))
-    implementation(project(":eco-core:core-nms:v1_20_R2"))
+//    implementation(project(":eco-core:core-nms:v1_17_R1"))
+//    implementation(project(":eco-core:core-nms:v1_18_R1"))
+//    implementation(project(":eco-core:core-nms:v1_18_R2"))
+//    implementation(project(":eco-core:core-nms:v1_19_R1"))
+//    implementation(project(":eco-core:core-nms:v1_19_R2"))
+//    implementation(project(":eco-core:core-nms:v1_19_R3"))
+//    implementation(project(":eco-core:core-nms:v1_20_R1"))
+//    implementation(project(":eco-core:core-nms:v1_20_R2"))
     implementation(project(":eco-core:core-nms:v1_20_R3", configuration = "reobf"))
 
-    if (JavaVersion.current().majorVersion.toDouble() >= 21) {
-        implementation(project(":eco-core:core-nms:v1_21", configuration = "reobf"))
-    }
+//    if (JavaVersion.current().majorVersion.toDouble() >= 21) {
+//        implementation(project(":eco-core:core-nms:v1_21", configuration = "reobf"))
+//    }
 }
 
 allprojects {

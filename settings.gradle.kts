@@ -17,16 +17,16 @@ rootProject.name = "EcoEnchants"
 include(":eco-core")
 include(":eco-core:core-plugin")
 include(":eco-core:core-nms")
-include(":eco-core:core-nms:v1_17_R1")
-include(":eco-core:core-nms:v1_18_R1")
-include(":eco-core:core-nms:v1_18_R2")
-include(":eco-core:core-nms:v1_19_R1")
-include(":eco-core:core-nms:v1_19_R2")
-include(":eco-core:core-nms:v1_19_R3")
-include(":eco-core:core-nms:v1_20_R1")
-include(":eco-core:core-nms:v1_20_R2")
+//include(":eco-core:core-nms:v1_17_R1")
+//include(":eco-core:core-nms:v1_18_R1")
+//include(":eco-core:core-nms:v1_18_R2")
+//include(":eco-core:core-nms:v1_19_R1")
+//include(":eco-core:core-nms:v1_19_R2")
+//include(":eco-core:core-nms:v1_19_R3")
+//include(":eco-core:core-nms:v1_20_R1")
+//include(":eco-core:core-nms:v1_20_R2")
 include(":eco-core:core-nms:v1_20_R3")
 
-if (JavaVersion.current().majorVersion.toDouble() >= 21) {
-    include(":eco-core:core-nms:v1_21")
-}
+//if (JavaVersion.current().majorVersion.toDouble() >= 21) {
+//    include(":eco-core:core-nms:v1_21")
+//}
